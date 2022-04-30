@@ -1,0 +1,41 @@
+    def solveSudoku(self, board: List[List[str]]) -> None:
+        def get_possibilities(r, c):
+            possibilities = set(['1','2','3','4','5','6','7','8','9'])
+            
+            for i in range(0, 9):
+                if board[r][i] in possibilities:
+                    possibilities.remove(board[r][i])
+                if board[i][c] in possibilities:
+                    possibilities.remove(board[i][c])
+            
+            for i in range(int(r/3) * 3, int(r/3) * 3 + 3):
+                for j in range(int(c/3) * 3, int(c/3) * 3 + 3):
+                    if board[i][j] in possibilities:
+                        possibilities.remove(board[i][j])
+                        
+            return possibilities                
+            
+        def backtrack(i):
+            if i >= 81:
+                return True
+            r,c = int(i/9), i%9
+            if board[r][c] == '0':
+                possibilities = get_possibilities(r, c)
+                if len(possibilities) > 0:
+                    for sol in possibilities:
+						# first we assume that sol is correct
+                        board[r][c] = sol
+                        if backtrack(i+1):
+                            return True
+						# we were not able to solve i + 1, hence this solution must be wrong
+                        board[r][c] = '0'
+                else:
+					# there are no possibilities - return False
+                    return False
+            else:
+				# there is a valid number already - we try to solve the next one
+                if backtrack(i+1):
+                    return True                
+            return False
+                
+        backtrack(0)   
